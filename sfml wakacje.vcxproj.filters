@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Parser">
+      <UniqueIdentifier>{618d5064-e369-4b66-92e2-e5f981312630}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game">
+      <UniqueIdentifier>{2fbdc76a-b972-4aac-bf25-8146b109117f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\gameMenagment">
+      <UniqueIdentifier>{d5ad3958-e225-4028-9799-7423d8aab47f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Objcect and Components">
+      <UniqueIdentifier>{f56d07b3-7bcf-4d81-957c-abe73742fa55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game\Objcect and Components\Collision">
+      <UniqueIdentifier>{413b61d4-1bb3-48ef-8d2e-af07ac95ae8e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TileMapParser.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="pugixml.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MovableShape.cpp" />
+    <ClCompile Include="TilesGenerator.cpp">
+      <Filter>Parser</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyboardComponent.cpp">
+      <Filter>Game\Objcect and Components</Filter>
+    </ClCompile>
+    <ClCompile Include="PositionComponent.cpp">
+      <Filter>Game\Objcect and Components</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>Game\gameMenagment</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicComponent.cpp">
+      <Filter>Game\gameMenagment</Filter>
+    </ClCompile>
+    <ClCompile Include="KeyboardMenager.cpp">
+      <Filter>Game\gameMenagment</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Game\gameMenagment</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneMachine.cpp">
+      <Filter>Game\gameMenagment</Filter>
+    </ClCompile>
+    <ClCompile Include="View.cpp">
+      <Filter>Game\gameMenagment</Filter>
+    </ClCompile>
+    <ClCompile Include="RectStopAnother.cpp">
+      <Filter>Game\Objcect and Components\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>Game\Objcect and Components</Filter>
+    </ClCompile>
+    <ClCompile Include="RectCollisionComponent.cpp">
+      <Filter>Game\Objcect and Components\Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugger.cpp" />
+    <ClCompile Include="Gravity.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Quadtree.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pugixml.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="pugiconfig.hpp">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="TileMapParser.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="Movable.h" />
+    <ClInclude Include="MovableObject.h" />
+    <ClInclude Include="MovableShape.h" />
+    <ClInclude Include="TilesGenerator.h">
+      <Filter>Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionResolver.h">
+      <Filter>Game\Objcect and Components\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Game\Objcect and Components</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyboardComponent.h">
+      <Filter>Game\Objcect and Components</Filter>
+    </ClInclude>
+    <ClInclude Include="PositionComponent.h">
+      <Filter>Game\Objcect and Components</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>Game\gameMenagment</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicComponent.h">
+      <Filter>Game\gameMenagment</Filter>
+    </ClInclude>
+    <ClInclude Include="KeyboardMenager.h">
+      <Filter>Game\gameMenagment</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Game\gameMenagment</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneMachine.h">
+      <Filter>Game\gameMenagment</Filter>
+    </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>Game\gameMenagment</Filter>
+    </ClInclude>
+    <ClInclude Include="RectStopAnother.h">
+      <Filter>Game\Objcect and Components\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>Game\Objcect and Components</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionComponent.h">
+      <Filter>Game\Objcect and Components\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="RectCollisionComponent.h">
+      <Filter>Game\Objcect and Components\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger.h" />
+    <ClInclude Include="Gravity.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Quadtree.h" />
+  </ItemGroup>
+</Project>
