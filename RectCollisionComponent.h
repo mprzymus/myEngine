@@ -16,7 +16,9 @@ public:
 	const sf::FloatRect& getBounds() { return bounds; }
 	sf::Vector2f getCentre() const override;
 	virtual void resolveCollision(CollisionComponent& another) override;
-	virtual int getHeight() const override { return bounds.height; }
-	virtual int getWidth() const override { return bounds.width; }
+	virtual float getHeight() const override { return bounds.height; }
+	virtual float getWidth() const override { return bounds.width; }
+	virtual float getLeft() const override { return bounds.left; }
+	virtual float getTop() const override { return bounds.top; }
 };
 

@@ -13,17 +13,21 @@ void KeyboardComponent::update(float timeElapsed)
 		{
 		case KeyboardMenager::Right:
 			toMove.x += owner->getPosition().getSpeed().x;
+			owner->getPosition().move(toMove);
 			break;
 		case KeyboardMenager::Left:
 			toMove.x -= owner->getPosition().getSpeed().x;
+			owner->getPosition().move(toMove);
 			break;
 		case KeyboardMenager::Jump:
-			toMove.y -= owner->getPosition().getSpeed().y;
+			//toMove.y -= owner->getPosition().getSpeed().y;
+			toMove = { owner->getPosition().getCurrentSpeed().x, -owner->getPosition().getSpeed().y };
+			owner->getPosition().setCurrentSpeed(toMove);
 			break;
 		default:
 			break;
 		}
 		x++;
 	}
- 	owner->getPosition().move(toMove);
+ 	//owner->getPosition().move(toMove);
 }

@@ -1,4 +1,7 @@
 #include "Game.h"
+#include <iostream>
+#include <memory>
+#include <array>
 
 int main()
 {

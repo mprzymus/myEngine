@@ -2,7 +2,6 @@
 #include "TilesGenerator.h"
 #include "RectStopAnother.h"
 #include "RectCollisionComponent.h"
-#include <iostream>
 
 void Scene::addObject(std::shared_ptr<Object> toAdd)
 {
@@ -10,14 +9,14 @@ void Scene::addObject(std::shared_ptr<Object> toAdd)
 }
 
 Scene::Scene(std::string sceneSourceName) :
-	window(sf::VideoMode(1920, 1080), "do sth", sf::Style::Default), debugger(window), gravity(50.f)
+	window(sf::VideoMode(1920, 1080), "do sth", sf::Style::Default), debugger(window), gravity(1000.f)
 {
 	sf::Vector2i size{ 200,145 };
 	mp::TilesGenerator generator("pierwsza mapa.tmx");
 	generator.generate(*this);
 	auto object = std::make_shared<Object>(size);
 	sf::Vector2f forPos{ 0.f,0.f };
-	sf::Vector2f speed{ 200.f,200.f };
+	sf::Vector2f speed{ 200.f,700.f };
 	auto position = std::make_unique<PositionComponent>(*object, forPos, speed);
 	object->setPosition(std::move(position));
 	std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
@@ -69,7 +68,6 @@ bool Scene::update()
 		}
 		
 	}
-	std::cout << myHero->getOwner().getPosition().getCurrentSpeed().y << std::endl;
 	window.display();
 	window.clear(sf::Color::Cyan);
 	return true;

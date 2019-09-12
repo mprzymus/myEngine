@@ -12,7 +12,9 @@ public:
 	Object& getOwner() { return *owner; }
 	virtual void setOwner(Object& owner) { this->owner = &owner; }
 	virtual sf::Vector2f getCentre() const = 0;
-	virtual int getHeight() const = 0;
-	virtual int getWidth() const = 0;
+	virtual float getHeight() const = 0;
+	virtual float getWidth() const = 0;
+	virtual float getLeft() const = 0;
+	virtual float getTop() const = 0;
 };
 
