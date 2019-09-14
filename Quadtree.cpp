@@ -90,3 +90,11 @@ void Quadtree::remove(std::shared_ptr<CollisionComponent> toRemove)
 	node.elements.erase(std::find(node.elements.begin(), node.elements.end(), toRemove));
 }
 
+std::vector<std::shared_ptr<CollisionComponent>> Quadtree::possibleOverlaps(std::shared_ptr<CollisionComponent> object)
+{
+	std::vector<std::shared_ptr<CollisionComponent>> toReturn;
+	Node* node = &search(head, object);
+
+	return toReturn;
+}
+

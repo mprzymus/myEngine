@@ -31,6 +31,7 @@ public:
 	Quadtree(int MaxLevel, int MaxElements, sf::FloatRect size);
 	void add(std::shared_ptr<CollisionComponent> toAdd);
 	void remove(std::shared_ptr<CollisionComponent> toRemove);
+	std::vector<std::shared_ptr<CollisionComponent>> possibleOverlaps(std::shared_ptr<CollisionComponent> object);
 	void update();
 };
 
