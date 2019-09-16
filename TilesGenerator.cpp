@@ -43,6 +43,7 @@ void TilesGenerator::generate(Scene& sceneForObjects)
 			collidable->setOwner(*object);
 			object->addComponent(collidable);
 			sceneForObjects.addCollidable(collidable);
+
 		}
 	}
 }

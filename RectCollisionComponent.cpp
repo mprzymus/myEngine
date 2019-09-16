@@ -39,3 +39,8 @@ void RectCollisionComponent::resolveCollision(CollisionComponent& another)
 	resolver->resolveCollision(another);
 	another.update(0.f);
 }
+
+bool RectCollisionComponent::operator==(const RectCollisionComponent& right) const
+{
+	return bounds == right.bounds;
+}

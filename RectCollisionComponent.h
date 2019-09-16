@@ -20,5 +20,6 @@ public:
 	virtual float getWidth() const override { return bounds.width; }
 	virtual float getLeft() const override { return bounds.left; }
 	virtual float getTop() const override { return bounds.top; }
+	bool operator== (const RectCollisionComponent& right) const;
 };
 

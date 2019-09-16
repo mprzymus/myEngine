@@ -2,14 +2,14 @@
 #include "TilesGenerator.h"
 #include "RectStopAnother.h"
 #include "RectCollisionComponent.h"
-
+#include <iostream>
 void Scene::addObject(std::shared_ptr<Object> toAdd)
 {
 	objects.push_back(toAdd);
 }
 
 Scene::Scene(std::string sceneSourceName) :
-	window(sf::VideoMode(1920, 1080), "do sth", sf::Style::Default), debugger(window), gravity(1000.f)
+	window(sf::VideoMode(1920, 1080), "do sth", sf::Style::Default), debugger(window), gravity(1000.f), collidable(10, 5, {0,0, 1920,1080 })
 {
 	sf::Vector2i size{ 200,145 };
 	mp::TilesGenerator generator("pierwsza mapa.tmx");
@@ -34,7 +34,7 @@ Scene::Scene(std::string sceneSourceName) :
 	object->addComponent(col);
 	myHero = col;
 	debugger.addCollidable(col);
-	for (auto coll : tempCollidableCollection)
+	for (auto coll : movable)
 	{
 		auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(coll);
 		if (rect != nullptr)
@@ -51,9 +51,14 @@ bool Scene::update()
 	{
 		object->update(time.asSeconds());
 	}
-	for (auto& collidable : tempCollidableCollection)
+	std::vector<std::shared_ptr<CollisionComponent>> temp = collidable.possibleOverlaps(myHero);
+	std::cout << temp.size() << std::endl;
+	for (auto& collidable : temp)
 	{
 		collidable->resolveCollision(*myHero);
+		auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(collidable);
+		if (rect != nullptr)
+			debugger.setSpecial(rect, true);
 	}
 	for (auto& object : objects)
 		object->draw(window);
@@ -71,4 +76,12 @@ bool Scene::update()
 	window.display();
 	window.clear(sf::Color::Cyan);
 	return true;
+}
+
+void Scene::addCollidable(std::shared_ptr<CollisionComponent> toAdd)
+{
+	collidable.add(toAdd);
+	auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(toAdd);
+	if (rect != nullptr)
+		debugger.addCollidable(rect);
 }

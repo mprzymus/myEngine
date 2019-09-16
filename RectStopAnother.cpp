@@ -6,8 +6,11 @@
 
 void RectStopAnother::resolveCollision(CollisionComponent& another)
 {
-	if (!owner->isCollidng(another)) return;
-
+	if (!owner->isCollidng(another))
+	{
+		//std::cout << "We do not collide\n";
+		return;
+	}
 	float xLeftDifference = owner->getCentre().x + owner->getWidth() / 2
 		- another.getCentre().x + another.getWidth() / 2;
 	float xRightDifference = owner->getCentre().x - owner->getWidth() / 2
