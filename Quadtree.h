@@ -27,6 +27,7 @@ class Quadtree
 	Node& search(Node& parent, std::shared_ptr<CollisionComponent> toFind);
 	void split(Node& toSplit);
 	int getChildIndexForObject(std::shared_ptr<CollisionComponent> element, Node& parent);
+	std::vector<std::shared_ptr<CollisionComponent>> possibleOverlaps(std::shared_ptr<CollisionComponent> object, Node& parentNode);
 public:
 	Quadtree(int MaxLevel, int MaxElements, sf::FloatRect size);
 	void add(std::shared_ptr<CollisionComponent> toAdd);

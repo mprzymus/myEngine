@@ -4,9 +4,9 @@ Quadtree::Node& Quadtree::search(Node& parent, std::shared_ptr<CollisionComponen
 {
 	int index = getChildIndexForObject(toFind, parent);
 	Node* node = &parent;
-	while (index != thisTree)
+	while (index != thisTree && node->children.at(index).get() != nullptr)
 	{
-		node = parent.children.at(index).get();
+		node = node->children.at(index).get();
 		index = getChildIndexForObject(toFind, *node);
 	}
 	return *node;
@@ -76,9 +76,21 @@ Quadtree::Quadtree(int MaxLevel, int MaxElements, sf::FloatRect size) :
 void Quadtree::add(std::shared_ptr<CollisionComponent> toAdd)
 {
 	Node* area = &search(head, toAdd);
-	if (area->elements.size() >= area->maxElements)
+	if (area->elements.size() <= area->maxElements)
 	{
 		split(*area);
+		auto it = area->elements.begin();
+		while (it != area->elements.end())
+		{
+			int index = getChildIndexForObject(*it, *area);
+			if (index != thisTree)
+			{
+				area->children.at(index)->elements.push_back(*it);
+				it = area->elements.erase(it);
+			}
+			else
+				it++;
+		}
 		area = &search(*area, toAdd);
 	}
 	area->elements.push_back(toAdd);
@@ -92,9 +104,21 @@ void Quadtree::remove(std::shared_ptr<CollisionComponent> toRemove)
 
 std::vector<std::shared_ptr<CollisionComponent>> Quadtree::possibleOverlaps(std::shared_ptr<CollisionComponent> object)
 {
+	return possibleOverlaps(object, head);
+}
+std::vector<std::shared_ptr<CollisionComponent>> Quadtree::possibleOverlaps(std::shared_ptr<CollisionComponent> object, Node& parentNode)
+{
 	std::vector<std::shared_ptr<CollisionComponent>> toReturn;
-	Node* node = &search(head, object);
-
+	Node* node = &search(parentNode, object);
+	toReturn.insert(toReturn.end(), node->elements.begin(), node->elements.end());
+	if (node->children.at(0).get() != nullptr)
+	{
+		for (auto& element : node->children)
+		{
+			auto temp = possibleOverlaps(object, *element);
+			toReturn.insert(toReturn.end(), temp.begin(), temp.end());
+		}
+	}
 	return toReturn;
 }
 
