@@ -1,10 +1,9 @@
+#include <cmath>
 #include <algorithm>
-#include <SFML\System\Vector2.hpp>
-#include "RectStopAnother.h"
+#include "RectMovable.h"
 #include "Object.h"
-#include <iostream>
 
-void RectStopAnother::resolveCollision(CollisionComponent& another)
+void RectMovable::resolveCollision(CollisionComponent& another)
 {
 	if (!owner->isCollidng(another))
 	{
@@ -60,5 +59,13 @@ void RectStopAnother::resolveCollision(CollisionComponent& another)
 		}
 		another.collisionAnswer(*owner, type);
 	}
-	
+}
+
+void RectMovable::collisionAnswer(CollisionComponent& another, CollisionComponent::CollisionType type)
+{
+	if (type == CollisionComponent::CollisionType::up)
+	{
+		gravity.removeObject(owner->getOwner());
+		owner->getOwner()->getPosition().setCurrentSpeedY(0.f);
+	}
 }

@@ -8,7 +8,7 @@ class GraphicComponent : public Component
 	std::shared_ptr<sf::Texture> texture;
 public:
 	virtual void update(float) override;
-	GraphicComponent(Object& owner, std::shared_ptr<sf::Texture> texture,
+	GraphicComponent(std::shared_ptr<Object> owner, std::shared_ptr<sf::Texture> texture,
 		sf::Vector2i texturePos,  float scale=1.f);
 	void draw(sf::RenderWindow& window);
 	sf::Sprite sprite;

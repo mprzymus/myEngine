@@ -1,6 +1,6 @@
 #include "Scene.h"
 #include "TilesGenerator.h"
-#include "RectStopAnother.h"
+#include "RectMovable.h"
 #include "RectCollisionComponent.h"
 #include <iostream>
 void Scene::addObject(std::shared_ptr<Object> toAdd)
@@ -17,20 +17,20 @@ Scene::Scene(std::string sceneSourceName) :
 	auto object = std::make_shared<Object>(size);
 	sf::Vector2f forPos{ 0.f,0.f };
 	sf::Vector2f speed{ 200.f,700.f };
-	auto position = std::make_unique<PositionComponent>(*object, forPos, speed);
+	auto position = std::make_unique<PositionComponent>(object, forPos, speed);
 	object->setPosition(std::move(position));
 	std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
 	if (!texture->loadFromFile("Viking.png"))
 		throw std::invalid_argument("No such texture to load file for map.");
 	sf::Vector2i temp{ 0,0 };
 	std::unique_ptr<GraphicComponent> gComponent =
-		std::make_unique<GraphicComponent>(*object, texture, temp,0.5f);
-	std::shared_ptr<KeyboardComponent> keyboard = std::make_shared<KeyboardComponent>(menager,*object);
+		std::make_unique<GraphicComponent>(object, texture, temp,0.5f);
+	std::shared_ptr<KeyboardComponent> keyboard = std::make_shared<KeyboardComponent>(menager,object);
 	object->setGraphic(std::move(gComponent));
 	objects.push_back(object); 
 	object->addComponent(keyboard);
-	std::shared_ptr<RectCollisionComponent> col = std::make_shared<RectCollisionComponent>(std::move(std::make_unique<RectStopAnother>()));
-	col->setOwner(*object);
+	std::shared_ptr<RectCollisionComponent> col = std::make_shared<RectCollisionComponent>(std::move(std::make_unique<RectMovable>(gravity)));
+	col->setOwner(object);
 	object->addComponent(col);
 	myHero = col;
 	debugger.addCollidable(col);
@@ -52,7 +52,7 @@ bool Scene::update()
 		object->update(time.asSeconds());
 	}
 	std::vector<std::shared_ptr<CollisionComponent>> temp = collidable.possibleOverlaps(myHero);
-	std::cout << temp.size() << std::endl;
+	//std::cout << temp.size() << std::endl;
 	for (auto& collidable : temp)
 	{
 		collidable->resolveCollision(*myHero);

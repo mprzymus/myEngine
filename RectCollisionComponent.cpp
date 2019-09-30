@@ -8,17 +8,18 @@ RectCollisionComponent::RectCollisionComponent(std::unique_ptr<CollisionResolver
 	resolver->setOwner(*this);
 }
 
-void RectCollisionComponent::setOwner(Object& owner)
+void RectCollisionComponent::setOwner(std::shared_ptr<Object> owner)
 {
-	this->owner = &owner;
-	bounds.left = owner.getPosition().getPosition().x;
-	bounds.top = owner.getPosition().getPosition().y;
-	bounds.height = owner.getSize().y;
-	bounds.width = owner.getSize().x;
+	this->owner = owner;
+	bounds.left = owner->getPosition().getPosition().x;
+	bounds.top = owner->getPosition().getPosition().y;
+	bounds.height = owner->getSize().y;
+	bounds.width = owner->getSize().x;
 }
 
 void RectCollisionComponent::update(float timeEllapsed)
 {
+	auto owner = this->owner.lock();
 	bounds.top = owner->getPosition().getPosition().y;
 	bounds.left = owner->getPosition().getPosition().x;
 }
@@ -38,6 +39,11 @@ void RectCollisionComponent::resolveCollision(CollisionComponent& another)
 {
 	resolver->resolveCollision(another);
 	another.update(0.f);
+}
+
+void RectCollisionComponent::collisionAnswer(CollisionComponent& another, CollisionComponent::CollisionType type)
+{
+	resolver->collisionAnswer(another, type);
 }
 
 bool RectCollisionComponent::operator==(const RectCollisionComponent& right) const

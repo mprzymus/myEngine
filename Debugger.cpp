@@ -5,20 +5,20 @@
 
 void Debugger::addCollidable(std::shared_ptr<RectCollisionComponent> collidable)
 {
-	posData temp(pairData(collidable, collidable->getOwner().getPosition().getPosition()));
+	posData temp(pairData(collidable, collidable->getOwner()->getPosition().getPosition()));
 	components.push_back(temp);
 }
 
 void Debugger::removeCollidable(std::shared_ptr<RectCollisionComponent> collidable)
 {
-	auto it = std::find(components.begin(), components.end(), posData(pairData(collidable, collidable->getOwner().getPosition().getPosition())));
+	auto it = std::find(components.begin(), components.end(), posData(pairData(collidable, collidable->getOwner()->getPosition().getPosition())));
 	if (it != components.end())
 		components.erase(it);
 }
 
 void Debugger::setSpecial(std::shared_ptr<RectCollisionComponent> collidable, bool special)
 {
-	auto it = std::find(components.begin(), components.end(), posData(pairData(collidable, collidable->getOwner().getPosition().getPosition())));
+	auto it = std::find(components.begin(), components.end(), posData(pairData(collidable, collidable->getOwner()->getPosition().getPosition())));
 	if (it != components.end())
 		it->isSpecial = special;
 }
@@ -47,10 +47,10 @@ void Debugger::drawCollidableSquares()
 		window.draw(centre);
 		window.draw(square);
 
-		if (loud && collidable.first()->getOwner().getPosition().getPosition() != collidable.second())
+		if (loud && collidable.first()->getOwner()->getPosition().getPosition() != collidable.second())
 			std::cout << "Was:" << collidable.second().x << ", " << collidable.second().y << " is: "
-			<< collidable.first()->getOwner().getPosition().getPosition().x << ", " 
-			<< collidable.first()->getOwner().getPosition().getPosition().y << std::endl;
-		collidable.second() = collidable.first()->getOwner().getPosition().getPosition();
+			<< collidable.first()->getOwner()->getPosition().getPosition().x << ", " 
+			<< collidable.first()->getOwner()->getPosition().getPosition().y << std::endl;
+		collidable.second() = collidable.first()->getOwner()->getPosition().getPosition();
 	}
 }

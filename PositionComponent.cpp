@@ -11,12 +11,12 @@ void PositionComponent::update(float timeElapsed)
 	//currentSpeed.y = 0;
 }
 
-PositionComponent::PositionComponent(Object& owner, sf::Vector2f position, sf::Vector2f speed,
+PositionComponent::PositionComponent(std::shared_ptr<Object> owner, sf::Vector2f position, sf::Vector2f speed,
 	sf::Vector2f currentSpeed) : currentSpeed(currentSpeed)
 {
 	this->speed = speed;
 	this->position = position;
-	this->owner = &owner; 
+	this->owner = owner; 
 }
 
 void PositionComponent::move(sf::Vector2f toMove)
@@ -27,6 +27,16 @@ void PositionComponent::move(sf::Vector2f toMove)
 void PositionComponent::setSpeed(sf::Vector2f speed)
 {
 	this->speed = speed;
+}
+
+void PositionComponent::setCurrentSpeedX(float x)
+{
+	currentSpeed.x = x;
+}
+
+void PositionComponent::setCurrentSpeedY(float y)
+{
+	currentSpeed.y = y;
 }
 
 void PositionComponent::setCurrentSpeed(sf::Vector2f& speed)

@@ -9,10 +9,12 @@ class PositionComponent : public Component
 	sf::Vector2f speed; // TODO make it  private
 public:
 	virtual void update(float timeElapsed)  override;
-	PositionComponent(Object& owner, sf::Vector2f position, sf::Vector2f speed,
+	PositionComponent(std::shared_ptr<Object> owner, sf::Vector2f position, sf::Vector2f speed,
 		sf::Vector2f currentSpeed = { 0,0 });
 	void move(sf::Vector2f toMove);
 	void setSpeed(sf::Vector2f speed);
+	void setCurrentSpeedX(float x);
+	void setCurrentSpeedY(float y);
 	void setCurrentSpeed(sf::Vector2f& speed);//sets current speed
 	const sf::Vector2f& getCurrentSpeed() const { return currentSpeed; }
 	const sf::Vector2f& getPosition() const { return position; }

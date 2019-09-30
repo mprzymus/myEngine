@@ -7,6 +7,7 @@ void KeyboardComponent::update(float timeElapsed)
 	sf::Vector2f toMove{ 0,0 };
 	const std::vector<KeyboardMenager::input>& input = menager.currentInput();
 	int x = 0;
+	auto owner = this->owner.lock();
 	while (input.size() > x)
 	{
 		switch (input.at(x))

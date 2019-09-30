@@ -30,17 +30,17 @@ void TilesGenerator::generate(Scene& sceneForObjects)
 			(float)element->y * parser->getTileHeight() };
 		auto object = std::make_shared<Object>(size);
 		std::unique_ptr<PositionComponent> pComponent = std::make_unique<PositionComponent>
-			(*object, position, speed);
+			(object, position, speed);
 		object->setPosition(std::move(pComponent));
 		sf::Vector2i onTex = countTexturePosition(*parser, *element);
 		std::unique_ptr<GraphicComponent> gComponent =
-			std::make_unique<GraphicComponent>(*object,texture,onTex);
+			std::make_unique<GraphicComponent>(object,texture,onTex);
 		object->setGraphic(std::move(gComponent));
 		sceneForObjects.addObject(object);
 		if (element->isCollidable)
 		{
 			std::shared_ptr<CollisionComponent>collidable = generateCollidable(*element, *object);
-			collidable->setOwner(*object);
+			collidable->setOwner(object);
 			object->addComponent(collidable);
 			sceneForObjects.addCollidable(collidable);
 

@@ -3,16 +3,16 @@
 
 void GraphicComponent::update(float)
 {
-	sprite.setPosition(owner->getPosition().getPosition().x, owner->getPosition().getPosition().y);
+	sprite.setPosition(owner.lock()->getPosition().getPosition().x, owner.lock()->getPosition().getPosition().y);
 }
 
-GraphicComponent::GraphicComponent(Object& owner, std::shared_ptr<sf::Texture> texture,
+GraphicComponent::GraphicComponent(std::shared_ptr<Object> owner, std::shared_ptr<sf::Texture> texture,
 	sf::Vector2i texturePos, float scale)
 {
-	this->owner = &owner;
-	sprite.setPosition(owner.getPosition().getPosition().x, owner.getPosition().getPosition().y);
+	this->owner = owner;
+	sprite.setPosition(owner->getPosition().getPosition().x, owner->getPosition().getPosition().y);
 	sprite.setTexture(*texture);
-	sprite.setTextureRect(sf::IntRect(texturePos, owner.getSize()));
+	sprite.setTextureRect(sf::IntRect(texturePos, owner->getSize()));
 	//sprite.setScale(scale, scale);
 	this->texture = texture;
 }

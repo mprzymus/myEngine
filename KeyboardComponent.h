@@ -6,9 +6,9 @@ class KeyboardComponent :
 {
 	KeyboardMenager& menager;
 public:
-	KeyboardComponent(KeyboardMenager& menager, Object& owner) 
+	KeyboardComponent(KeyboardMenager& menager, std::shared_ptr<Object> owner) 
 		: menager(menager) {
-		this->owner = &owner;
+		this->owner = owner;
 	}
 	virtual void update(float timeElapsed) override;
 };
