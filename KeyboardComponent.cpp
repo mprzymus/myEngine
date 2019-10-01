@@ -13,17 +13,22 @@ void KeyboardComponent::update(float timeElapsed)
 		switch (input.at(x))
 		{
 		case KeyboardMenager::Right:
-			toMove.x += owner->getPosition().getSpeed().x;
-			owner->getPosition().move(toMove);
+			toMove.x += position->getSpeed().x;
+			position->move(toMove);
 			break;
 		case KeyboardMenager::Left:
-			toMove.x -= owner->getPosition().getSpeed().x;
-			owner->getPosition().move(toMove);
+			toMove.x -= position->getSpeed().x;
+			position->move(toMove);
 			break;
 		case KeyboardMenager::Jump:
 			//toMove.y -= owner->getPosition().getSpeed().y;
-			toMove = { owner->getPosition().getCurrentSpeed().x, -owner->getPosition().getSpeed().y };
-			owner->getPosition().setCurrentSpeed(toMove);
+			if (!position->isInAir())
+			{
+				toMove = { position->getCurrentSpeed().x, -position->getSpeed().y };
+				position->setCurrentSpeed(toMove);
+				position->setInAir(true);
+				gravity.addObject(owner);
+			}
 			break;
 		default:
 			break;

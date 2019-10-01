@@ -1,7 +1,10 @@
 #include <cmath>
+#include <exception>
 #include <algorithm>
 #include "RectMovable.h"
 #include "Object.h"
+
+RectMovable::RectMovable(Gravity& gravity) : gravity(gravity) {}
 
 void RectMovable::resolveCollision(CollisionComponent& another)
 {
@@ -10,6 +13,9 @@ void RectMovable::resolveCollision(CollisionComponent& another)
 		//std::cout << "We do not collide\n";
 		return;
 	}
+	auto position = dynamic_cast<DynamicPositionComponent*>(&another.getOwner()->getPosition());
+	if (position == nullptr)
+		return;
 	CollisionComponent::CollisionType type;
 	float xLeftDifference = owner->getCentre().x + owner->getWidth() / 2
 		- another.getCentre().x + another.getWidth() / 2;
@@ -23,7 +29,7 @@ void RectMovable::resolveCollision(CollisionComponent& another)
 	float x = std::min(std::fabsf(xLeftDifference), std::fabsf(xRightDifference));
 	float y = std::min(std::fabsf(yUpDifference), std::fabsf(yDownDifference));
 
-	sf::Vector2f speed{ another.getOwner()->getPosition().getCurrentSpeed() };
+	sf::Vector2f speed{ position->getCurrentSpeed() };
 
 	//left or right
 	if (x < y)
@@ -32,12 +38,12 @@ void RectMovable::resolveCollision(CollisionComponent& another)
 		{
 			type = CollisionComponent::CollisionType::left;
 			//speed.x = std::max(speed.x, 0.f);
-			another.getOwner()->getPosition().moveX(xLeftDifference);
+			position->moveX(xLeftDifference);
 			//another.getOwner().getPosition().setCurrentSpeed(speed);
 		}
 		else
 		{
-			another.getOwner()->getPosition().moveX(xRightDifference);
+			position->moveX(xRightDifference);
 			type = CollisionComponent::CollisionType::right;
 		}
 	}
@@ -46,19 +52,19 @@ void RectMovable::resolveCollision(CollisionComponent& another)
 		//another is upper
 		if (std::fabsf(yUpDifference) < std::fabsf(yDownDifference))
 		{
-			another.getOwner()->getPosition().moveY(yUpDifference);
+			position->moveY(yUpDifference);
 			type = CollisionComponent::CollisionType::up;
 		}
 		//another is lower
 		else
 		{
-			auto& pos = another.getOwner()->getPosition();
-			pos.moveY(yDownDifference);
-			pos.setCurrentSpeedY(std::fabsf(pos.getCurrentSpeed().y));
+			position->moveY(yDownDifference);
+			position->setCurrentSpeedY(std::fabsf(position->getCurrentSpeed().y));
 			type = CollisionComponent::CollisionType::down;
 		}
 		another.collisionAnswer(*owner, type);
 	}
+
 }
 
 void RectMovable::collisionAnswer(CollisionComponent& another, CollisionComponent::CollisionType type)
@@ -66,6 +72,15 @@ void RectMovable::collisionAnswer(CollisionComponent& another, CollisionComponen
 	if (type == CollisionComponent::CollisionType::up)
 	{
 		gravity.removeObject(owner->getOwner());
-		owner->getOwner()->getPosition().setCurrentSpeedY(0.f);
+		position->setCurrentSpeedY(0.f);
+		position->setInAir(false);
 	}
+}
+
+void RectMovable::setOwner(CollisionComponent& Owner)
+{
+	owner = &Owner;
+	position = dynamic_cast<DynamicPositionComponent*>(&owner->getOwner()->getPosition());
+	if (position == nullptr)
+		throw std::invalid_argument("Rect movable must be used for object with DynamicPositionComponent\n");
 }

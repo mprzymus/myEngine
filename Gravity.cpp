@@ -5,7 +5,7 @@
 #include <cmath>
 #include <climits>
 #include <algorithm>
-
+#include "DynamicPositionComponent.h"
 /*Ground::Ground(const sf::Shape& shape, std::vector<Movable*>& objects, const float gravitational_acceleration)
 	: ground(shape), entities(objects), g(gravitational_acceleration/pow(10.f,12.f)*45.f)
 {}
@@ -35,7 +35,8 @@ void Gravity::update(float timeElapsed)
 	sf::Vector2f speedToAdd = { 0.f, timeElapsed * g };
 	for (auto & object : entities)
 	{
-		object->getPosition().move(speedToAdd);
+		auto position = dynamic_cast<DynamicPositionComponent*>(&object->getPosition());
+		position->move(speedToAdd);
 		//std::cout << object->getPosition().getCurrentSpeed().y << std::endl;
 	}
 }

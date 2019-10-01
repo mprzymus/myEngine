@@ -2,6 +2,7 @@
 #include <SFML\System\Vector2.hpp>
 #include "RectStopAnother.h"
 #include "Object.h"
+#include "DynamicPositionComponent.h"
 #include <iostream>
 
 void RectStopAnother::resolveCollision(CollisionComponent& another)
@@ -11,6 +12,9 @@ void RectStopAnother::resolveCollision(CollisionComponent& another)
 		//std::cout << "We do not collide\n";
 		return;
 	}
+	auto position = dynamic_cast<DynamicPositionComponent*>(&another.getOwner()->getPosition());
+	if (position == nullptr)
+		return;
 	CollisionComponent::CollisionType type;
 	float xLeftDifference = owner->getCentre().x + owner->getWidth() / 2
 		- another.getCentre().x + another.getWidth() / 2;
@@ -24,7 +28,7 @@ void RectStopAnother::resolveCollision(CollisionComponent& another)
 	float x = std::min(std::fabsf(xLeftDifference), std::fabsf(xRightDifference));
 	float y = std::min(std::fabsf(yUpDifference), std::fabsf(yDownDifference));
 
-	sf::Vector2f speed{ another.getOwner()->getPosition().getCurrentSpeed() };
+	sf::Vector2f speed{ position->getCurrentSpeed() };
 
 	//left or right
 	if (x < y)
@@ -33,12 +37,12 @@ void RectStopAnother::resolveCollision(CollisionComponent& another)
 		{
 			type = CollisionComponent::CollisionType::left;
 			//speed.x = std::max(speed.x, 0.f);
-			another.getOwner()->getPosition().moveX(xLeftDifference);
+			position->moveX(xLeftDifference);
 			//another.getOwner().getPosition().setCurrentSpeed(speed);
 		}
 		else
 		{
-			another.getOwner()->getPosition().moveX(xRightDifference);
+			position->moveX(xRightDifference);
 			type = CollisionComponent::CollisionType::right;
 		}
 	}
@@ -47,15 +51,14 @@ void RectStopAnother::resolveCollision(CollisionComponent& another)
 		//another is upper
 		if (std::fabsf(yUpDifference) < std::fabsf(yDownDifference))
 		{
-			another.getOwner()->getPosition().moveY(yUpDifference);
+			position->moveY(yUpDifference);
 			type = CollisionComponent::CollisionType::up;
 		}
 		//another is lower
 		else
 		{
-			auto& pos = another.getOwner()->getPosition();
-			pos.moveY(yDownDifference);
-			pos.setCurrentSpeedY(std::fabsf(pos.getCurrentSpeed().y));
+			position->moveY(yDownDifference);
+			position->setCurrentSpeedY(std::fabsf(position->getCurrentSpeed().y));
 			type = CollisionComponent::CollisionType::down;
 		}
 		another.collisionAnswer(*owner, type);

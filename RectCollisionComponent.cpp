@@ -5,7 +5,6 @@
 RectCollisionComponent::RectCollisionComponent(std::unique_ptr<CollisionResolver> Resolver)
 {
 	resolver = std::move(Resolver);
-	resolver->setOwner(*this);
 }
 
 void RectCollisionComponent::setOwner(std::shared_ptr<Object> owner)
@@ -15,6 +14,7 @@ void RectCollisionComponent::setOwner(std::shared_ptr<Object> owner)
 	bounds.top = owner->getPosition().getPosition().y;
 	bounds.height = owner->getSize().y;
 	bounds.width = owner->getSize().x;
+	resolver->setOwner(*this);
 }
 
 void RectCollisionComponent::update(float timeEllapsed)

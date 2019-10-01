@@ -22,7 +22,6 @@ void TilesGenerator::generate(Scene& sceneForObjects)
 	std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
 	if (!texture->loadFromFile(parser->getTextureData().path))
 		throw std::invalid_argument("No such texture to load file for map.");
-	sf::Vector2f speed = { 0.f,0.f };
 	sf::Vector2i size{parser->getTileWidth(), parser->getTileHeight()};
 	for (auto element : parser->getTiles())
 	{
@@ -30,7 +29,7 @@ void TilesGenerator::generate(Scene& sceneForObjects)
 			(float)element->y * parser->getTileHeight() };
 		auto object = std::make_shared<Object>(size);
 		std::unique_ptr<PositionComponent> pComponent = std::make_unique<PositionComponent>
-			(object, position, speed);
+			(object, position);
 		object->setPosition(std::move(pComponent));
 		sf::Vector2i onTex = countTexturePosition(*parser, *element);
 		std::unique_ptr<GraphicComponent> gComponent =

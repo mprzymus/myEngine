@@ -2,6 +2,7 @@
 #include "TilesGenerator.h"
 #include "RectMovable.h"
 #include "RectCollisionComponent.h"
+#include "DynamicPositionComponent.h"
 #include <iostream>
 void Scene::addObject(std::shared_ptr<Object> toAdd)
 {
@@ -16,8 +17,8 @@ Scene::Scene(std::string sceneSourceName) :
 	generator.generate(*this);
 	auto object = std::make_shared<Object>(size);
 	sf::Vector2f forPos{ 0.f,0.f };
-	sf::Vector2f speed{ 200.f,700.f };
-	auto position = std::make_unique<PositionComponent>(object, forPos, speed);
+	sf::Vector2f speed{ 200.f,750.f };
+	auto position = std::make_unique<DynamicPositionComponent>(object, forPos, speed);
 	object->setPosition(std::move(position));
 	std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
 	if (!texture->loadFromFile("Viking.png"))
@@ -25,7 +26,7 @@ Scene::Scene(std::string sceneSourceName) :
 	sf::Vector2i temp{ 0,0 };
 	std::unique_ptr<GraphicComponent> gComponent =
 		std::make_unique<GraphicComponent>(object, texture, temp,0.5f);
-	std::shared_ptr<KeyboardComponent> keyboard = std::make_shared<KeyboardComponent>(menager,object);
+	std::shared_ptr<KeyboardComponent> keyboard = std::make_shared<KeyboardComponent>(menager,object,gravity);
 	object->setGraphic(std::move(gComponent));
 	objects.push_back(object); 
 	object->addComponent(keyboard);
@@ -41,6 +42,7 @@ Scene::Scene(std::string sceneSourceName) :
 			debugger.addCollidable(rect);
 	}
 	gravity.addObject(object);
+	clock.restart(); // to start measuring time after scene's creation
 }
 
 bool Scene::update()
