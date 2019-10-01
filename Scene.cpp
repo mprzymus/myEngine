@@ -12,7 +12,8 @@ void Scene::addObject(std::shared_ptr<Object> toAdd)
 Scene::Scene(std::string sceneSourceName) :
 	window(sf::VideoMode(1920, 1080), "do sth", sf::Style::Default), debugger(window), gravity(1000.f), collidable(10, 5, {0,0, 1920,1080 })
 {
-	sf::Vector2i size{ 200,145 };
+	sf::Vector2i size{ 15,15 };
+	sf::Vector2i textureSize{200, 145};
 	mp::TilesGenerator generator("pierwsza mapa.tmx");
 	generator.generate(*this);
 	auto object = std::make_shared<Object>(size);
@@ -25,7 +26,7 @@ Scene::Scene(std::string sceneSourceName) :
 		throw std::invalid_argument("No such texture to load file for map.");
 	sf::Vector2i temp{ 0,0 };
 	std::unique_ptr<GraphicComponent> gComponent =
-		std::make_unique<GraphicComponent>(object, texture, temp,0.5f);
+		std::make_unique<GraphicComponent>(object, texture, temp, textureSize);
 	std::shared_ptr<KeyboardComponent> keyboard = std::make_shared<KeyboardComponent>(menager,object,gravity);
 	object->setGraphic(std::move(gComponent));
 	objects.push_back(object); 

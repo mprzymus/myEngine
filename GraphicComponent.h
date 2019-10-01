@@ -9,7 +9,9 @@ class GraphicComponent : public Component
 public:
 	virtual void update(float) override;
 	GraphicComponent(std::shared_ptr<Object> owner, std::shared_ptr<sf::Texture> texture,
-		sf::Vector2i texturePos,  float scale=1.f);
+		sf::Vector2i texturePos,  float scale = 1.f);
+	GraphicComponent(std::shared_ptr<Object> owner, std::shared_ptr<sf::Texture> texture,
+		sf::Vector2i texturePos, sf::Vector2i textureSize);
 	void draw(sf::RenderWindow& window);
 	sf::Sprite sprite;
 };
