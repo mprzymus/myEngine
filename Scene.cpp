@@ -9,10 +9,10 @@ void Scene::addObject(std::shared_ptr<Object> toAdd)
 	objects.push_back(toAdd);
 }
 
-Scene::Scene(std::string sceneSourceName) :
-	window(sf::VideoMode(1920, 1080), "do sth", sf::Style::Default), debugger(window), gravity(1000.f), collidable(10, 5, {0,0, 1920,1080 })
+Scene::Scene(std::string sceneSourceName, sf::Vector2i resolution) :
+	window(sf::VideoMode(resolution.x, resolution.y), "do sth", sf::Style::Default), debugger(window), gravity(1000.f), collidable(500, 6, {0,0, 3200,1500 })
 {
-	sf::Vector2i size{ 15,15 };
+	sf::Vector2i size{ 55,40 };
 	sf::Vector2i textureSize{200, 145};
 	mp::TilesGenerator generator("pierwsza mapa.tmx");
 	generator.generate(*this);
@@ -36,6 +36,8 @@ Scene::Scene(std::string sceneSourceName) :
 	object->addComponent(col);
 	myHero = col;
 	debugger.addCollidable(col);
+	view = std::make_unique<View>(object, 1920.f, 1080.f);
+	window.setView(view->getView());
 	for (auto coll : movable)
 	{
 		auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(coll);
@@ -44,6 +46,7 @@ Scene::Scene(std::string sceneSourceName) :
 	}
 	gravity.addObject(object);
 	clock.restart(); // to start measuring time after scene's creation
+	std::cout << collidable.getSize() << std::endl;
 }
 
 bool Scene::update()
@@ -63,7 +66,7 @@ bool Scene::update()
 		if (rect != nullptr)
 			debugger.setSpecial(rect, true);
 	}
-	for (auto& object : objects)
+		for (auto& object : objects)
 		object->draw(window);
 	debugger.drawCollidableSquares();
 	sf::Event event;
@@ -76,6 +79,8 @@ bool Scene::update()
 		}
 		
 	}
+	view->update();
+	window.setView(view->getView());
 	window.display();
 	window.clear(sf::Color::Cyan);
 	return true;
@@ -83,6 +88,7 @@ bool Scene::update()
 
 void Scene::addCollidable(std::shared_ptr<CollisionComponent> toAdd)
 {
+	//movable.push_back(toAdd);
 	collidable.add(toAdd);
 	auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(toAdd);
 	if (rect != nullptr)

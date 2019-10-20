@@ -7,9 +7,11 @@
 #include "Debugger.h"
 #include "Gravity.h"
 #include "Quadtree.h"
+#include "View.h"
 
 class Scene
 {
+	std::unique_ptr<View> view;
 	Gravity gravity;
 	KeyboardMenager menager;
 	std::vector<std::shared_ptr<Object>> objects;
@@ -20,9 +22,9 @@ class Scene
 	std::vector<std::shared_ptr<CollisionComponent>> movable; // not this way, just to check if collision detection works
 	Quadtree collidable;
 public:
+	Scene(std::string sceneSourceName, sf::Vector2i resolution);
 	Debugger debugger;
 	void addObject(std::shared_ptr<Object> toAdd);
-	Scene(std::string sceneSourceName);
 	const std::vector<std::shared_ptr<Object>>& getObjects() { return objects; }
 	bool update();
 	virtual ~Scene() {}

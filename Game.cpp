@@ -14,7 +14,7 @@ void Game::setRunning(bool isRunning)
 Game::Game() : running(true)
 {
 	fps = 0;
-	currentScene = std::make_unique<Scene>("pierwsza mapa.tmx");//one scene so far
+	currentScene = std::make_unique<Scene>("pierwsza mapa.tmx", sf::Vector2i(1920,1080));//one scene so far
 	
 }
 
