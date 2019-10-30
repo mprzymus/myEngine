@@ -21,6 +21,8 @@ class Scene
 	std::shared_ptr<CollisionComponent> myHero;
 	std::vector<std::shared_ptr<CollisionComponent>> movable; // not this way, just to check if collision detection works
 	Quadtree collidable;
+	void draw();
+	void collisionUpdate();
 public:
 	Scene(std::string sceneSourceName, sf::Vector2i resolution);
 	Debugger debugger;

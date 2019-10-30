@@ -4,6 +4,7 @@
 #include "RectCollisionComponent.h"
 #include "DynamicPositionComponent.h"
 #include <iostream>
+#include <thread>
 void Scene::addObject(std::shared_ptr<Object> toAdd)
 {
 	objects.push_back(toAdd);
@@ -19,7 +20,7 @@ Scene::Scene(std::string sceneSourceName, sf::Vector2i resolution) :
 	auto object = std::make_shared<Object>(size);
 	sf::Vector2f forPos{ 0.f,0.f };
 	sf::Vector2f speed{ 200.f,750.f };
-	auto position = std::make_unique<DynamicPositionComponent>(object, forPos, speed);
+	auto position = std::make_unique<DynamicPositionComponent>(object, forPos, gravity, speed);
 	object->setPosition(std::move(position));
 	std::shared_ptr<sf::Texture> texture = std::make_shared<sf::Texture>();
 	if (!texture->loadFromFile("Viking.png"))
@@ -52,25 +53,18 @@ Scene::Scene(std::string sceneSourceName, sf::Vector2i resolution) :
 bool Scene::update()
 {
 	sf::Time time = clock.restart();
+	//std::thread collider(&Scene::collisionUpdate, this);
 	gravity.update(time.asSeconds());
 	for (auto& object : objects)
 	{
 		object->update(time.asSeconds());
 	}
-	std::vector<std::shared_ptr<CollisionComponent>> temp = collidable.possibleOverlaps(myHero);
 	//std::cout << temp.size() << std::endl;
-	for (auto& collidable : temp)
-	{
-		collidable->resolveCollision(*myHero);
-		auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(collidable);
-		if (rect != nullptr)
-			debugger.setSpecial(rect, true);
-	}
-		for (auto& object : objects)
-		object->draw(window);
+	//collisionUpdate();
+	draw();
 	debugger.drawCollidableSquares();
 	sf::Event event;
-	while (window.pollEvent(event))
+	if (window.pollEvent(event))
 	{
 		if (event.type == sf::Event::Closed)
 		{
@@ -79,11 +73,30 @@ bool Scene::update()
 		}
 		
 	}
+	//collider.join();
 	view->update();
 	window.setView(view->getView());
 	window.display();
 	window.clear(sf::Color::Cyan);
 	return true;
+}
+
+void Scene::collisionUpdate()
+{
+	std::vector<std::shared_ptr<CollisionComponent>> temp = collidable.possibleOverlaps(myHero);
+	for (auto& collidable : temp)
+	{
+		collidable->resolveCollision(*myHero);
+		auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(collidable);
+		if (rect != nullptr)
+			debugger.setSpecial(rect, true);
+	}
+}
+
+void Scene::draw()
+{
+	for (auto& object : objects)
+		object->draw(window);
 }
 
 void Scene::addCollidable(std::shared_ptr<CollisionComponent> toAdd)

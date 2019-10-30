@@ -10,6 +10,7 @@ public:
 		up, down, left, right
 	};
 	virtual void collisionAnswer(CollisionComponent& another, CollisionComponent::CollisionType type) = 0;
+	virtual void onBoundsAnswer(CollisionComponent& another) = 0;
 	void update(float timeEllapsed) override {};
 	virtual bool isCollidng(const CollisionComponent& another) const = 0;
 	virtual void resolveCollision(CollisionComponent& another) = 0;

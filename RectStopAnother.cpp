@@ -7,12 +7,20 @@
 
 void RectStopAnother::resolveCollision(CollisionComponent& another)
 {
+	auto position = dynamic_cast<DynamicPositionComponent*>(&another.getOwner()->getPosition());
 	if (!owner->isCollidng(another))
 	{
+		if ((another.getLeft() < owner->getWidth() + owner->getLeft() &&
+			another.getLeft() + another.getWidth() > owner->getLeft()) &&
+			owner->getTop() == another.getTop() + another.getHeight())
+		{
+			//std::cout << "On ground\n";
+			another.onBoundsAnswer(another);
+		}
 		//std::cout << "We do not collide\n";
 		return;
 	}
-	auto position = dynamic_cast<DynamicPositionComponent*>(&another.getOwner()->getPosition());
+	//std::cout << "Collision\n";
 	if (position == nullptr)
 		return;
 	CollisionComponent::CollisionType type;

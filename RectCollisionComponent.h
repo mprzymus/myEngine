@@ -17,6 +17,7 @@ public:
 	sf::Vector2f getCentre() const override;
 	virtual void resolveCollision(CollisionComponent& another) override;
 	virtual void collisionAnswer(CollisionComponent& another, CollisionComponent::CollisionType type) override;
+	virtual void onBoundsAnswer(CollisionComponent& another) override;
 	virtual float getHeight() const override { return bounds.height; }
 	virtual float getWidth() const override { return bounds.width; }
 	virtual float getLeft() const override { return bounds.left; }

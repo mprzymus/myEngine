@@ -74,7 +74,13 @@ void RectMovable::collisionAnswer(CollisionComponent& another, CollisionComponen
 		gravity.removeObject(owner->getOwner());
 		position->setCurrentSpeedY(0.f);
 		position->setInAir(false);
+
 	}
+}
+
+void RectMovable::onBoundsAnswer(CollisionComponent& another)
+{
+	position->setStartedToFall(false);
 }
 
 void RectMovable::setOwner(CollisionComponent& Owner)

@@ -4,6 +4,7 @@ class RectStopAnother :
 	public CollisionResolver
 {
 	virtual void resolveCollision(CollisionComponent& another) override;
+	virtual void onBoundsAnswer(CollisionComponent& another) override {}
 	virtual void collisionAnswer(CollisionComponent& another, CollisionComponent::CollisionType type) override {}
 };
 

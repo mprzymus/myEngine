@@ -46,6 +46,11 @@ void RectCollisionComponent::collisionAnswer(CollisionComponent& another, Collis
 	resolver->collisionAnswer(another, type);
 }
 
+void RectCollisionComponent::onBoundsAnswer(CollisionComponent& another)
+{
+	resolver->onBoundsAnswer(another);
+}
+
 bool RectCollisionComponent::operator==(const RectCollisionComponent& right) const
 {
 	return bounds == right.bounds;

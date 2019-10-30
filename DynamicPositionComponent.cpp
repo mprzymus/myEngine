@@ -1,14 +1,25 @@
 #include "DynamicPositionComponent.h"
+#include <iostream>
 
-DynamicPositionComponent::DynamicPositionComponent(std::shared_ptr<Object> owner, sf::Vector2f position, sf::Vector2f speed,
-	sf::Vector2f currentSpeed) : PositionComponent(owner,position), currentSpeed(currentSpeed), speed(speed)
-{}
+DynamicPositionComponent::DynamicPositionComponent(std::shared_ptr<Object> owner, sf::Vector2f position, Gravity& gravity,
+	sf::Vector2f speed, sf::Vector2f currentSpeed) : PositionComponent(owner, position), gravity(gravity), currentSpeed(currentSpeed),
+	speed(speed), inAir(true), startedToFall(false) {
+	std::cout << "here\n";
+}
 
 void DynamicPositionComponent::update(float timeElapsed)
 {
+	if (!inAir && startedToFall)
+	{
+		//std::cout << "Started to fall\n";
+		if (!owner.expired())
+			gravity.addObject(owner.lock());
+		inAir = true;
+	}
 	position.x += timeElapsed * currentSpeed.x;
 	position.y += timeElapsed * currentSpeed.y;
 	currentSpeed.x = 0;
+	startedToFall = true;
 }
 
 void DynamicPositionComponent::move(sf::Vector2f toMove)
