@@ -5,16 +5,18 @@
 #include "Component.h"
 #include "PositionComponent.h"
 #include "GraphicComponent.h"
+#include"IdComponent.h"
 
 class Object
 {
 	std::unique_ptr<PositionComponent> position;
 	std::unique_ptr<GraphicComponent> graphic;
-	sf::Vector2i size; // have to move into any component, object shouldn't have to be rectangle
+	sf::Vector2i size;
+	std::vector<std::shared_ptr<Component>> components;
+	IdComponent id;
 public:
 	Object(sf::Vector2i size);
 	void update(float timeElapsed);
-	std::vector<std::shared_ptr<Component>> components;
 	void setPosition(std::unique_ptr<PositionComponent> Position);
 	void setGraphic(std::unique_ptr<GraphicComponent> Graphic);
 	void addComponent(std::shared_ptr<Component> toAdd);
@@ -22,5 +24,6 @@ public:
 	const sf::Vector2i& getSize() { return size; }
 	PositionComponent& getPosition() { return *position; }
 	GraphicComponent& getGraphic() { return *graphic; }
+	int getId() { return id.getId(); }
 };
 

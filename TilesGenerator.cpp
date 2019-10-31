@@ -38,7 +38,7 @@ void TilesGenerator::generate(Scene& sceneForObjects)
 		sceneForObjects.addObject(object);
 		if (element->isCollidable)
 		{
-			std::shared_ptr<CollisionComponent>collidable = generateCollidable(*element, *object);
+			std::shared_ptr<CollisionComponent>collidable = generateCollidable(*element, object);
 			collidable->setOwner(object);
 			object->addComponent(collidable);
 			sceneForObjects.addCollidable(collidable);
@@ -55,8 +55,8 @@ sf::Vector2i TilesGenerator::countTexturePosition(mp::TileMapParser& parser, mp:
 	return toReturn;
 }
 
-std::shared_ptr<CollisionComponent> mp::TilesGenerator::generateCollidable(mp::TileData& element, Object& object)
+std::shared_ptr<CollisionComponent> mp::TilesGenerator::generateCollidable(mp::TileData& element, std::shared_ptr<Object> object)
 {
-	std::shared_ptr<CollisionComponent> toReturn = std::make_shared<RectCollisionComponent>(std::move(std::make_unique<RectStopAnother>()));
+	std::shared_ptr<CollisionComponent> toReturn = std::make_shared<RectCollisionComponent>(object, std::move(std::make_unique<RectStopAnother>()));
 	return toReturn;
 }

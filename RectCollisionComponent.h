@@ -9,11 +9,11 @@ class RectCollisionComponent :
 	std::unique_ptr<CollisionResolver> resolver;
 	sf::FloatRect bounds;
 public:
-	RectCollisionComponent(std::unique_ptr<CollisionResolver> Resolver);
+	RectCollisionComponent(std::shared_ptr<Object> owner, std::unique_ptr<CollisionResolver> Resolver);
 	void setOwner(std::shared_ptr<Object> owner) override;
 	void update(float timeEllapsed) override;
 	virtual bool isCollidng(const CollisionComponent& another) const override;
-	const sf::FloatRect& getBounds() { return bounds; }
+	const sf::FloatRect& getBounds() override { return bounds; }
 	sf::Vector2f getCentre() const override;
 	virtual void resolveCollision(CollisionComponent& another) override;
 	virtual void collisionAnswer(CollisionComponent& another, CollisionComponent::CollisionType type) override;

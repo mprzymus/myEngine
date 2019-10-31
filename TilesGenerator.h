@@ -9,7 +9,7 @@ namespace mp
 	{
 		std::shared_ptr<mp::TileMapParser> parser = nullptr;
 		sf::Vector2i countTexturePosition(mp::TileMapParser& parser, mp::TileData& element);
-		std::shared_ptr<CollisionComponent>generateCollidable(TileData& element, Object& object);
+		std::shared_ptr<CollisionComponent>generateCollidable(TileData& element, std::shared_ptr<Object> object);
 	public:
 		TilesGenerator() {}
 		TilesGenerator(std::string sourceName);

@@ -2,24 +2,23 @@
 #include "Object.h"
 #include <iostream>
 
-RectCollisionComponent::RectCollisionComponent(std::unique_ptr<CollisionResolver> Resolver)
+RectCollisionComponent::RectCollisionComponent(std::shared_ptr<Object> owner, std::unique_ptr<CollisionResolver> Resolver) : CollisionComponent(owner)
 {
 	resolver = std::move(Resolver);
 }
 
 void RectCollisionComponent::setOwner(std::shared_ptr<Object> owner)
 {
-	this->owner = owner;
+	this->owner = owner.get();
 	bounds.left = owner->getPosition().getPosition().x;
 	bounds.top = owner->getPosition().getPosition().y;
-	bounds.height = owner->getSize().y;
-	bounds.width = owner->getSize().x;
+	bounds.height = (float)owner->getSize().y;
+	bounds.width = (float)owner->getSize().x;
 	resolver->setOwner(*this);
 }
 
 void RectCollisionComponent::update(float timeEllapsed)
 {
-	auto owner = this->owner.lock();
 	bounds.top = owner->getPosition().getPosition().y;
 	bounds.left = owner->getPosition().getPosition().x;
 }

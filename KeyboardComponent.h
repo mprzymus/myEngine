@@ -15,8 +15,7 @@ class KeyboardComponent :
 
 public:
 	KeyboardComponent(KeyboardMenager& menager, std::shared_ptr<Object> owner, Gravity& gravity) 
-		: menager(menager), gravity(gravity) {
-		this->owner = owner;
+		: Component(owner), menager(menager), gravity(gravity) {
 		position = dynamic_cast<DynamicPositionComponent*>(&owner->getPosition());
 		if (position == nullptr)
 			throw std::invalid_argument("Only object with DynamicPositionComponent can be moved by keyboard");

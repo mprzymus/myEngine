@@ -1,46 +1,138 @@
 #include "Quadtree.h"
-#include <exception>
-#include <iostream>
 
-Quadtree::Quadtree(int MaxLevel, int MaxElements, sf::FloatRect size) :
-	head(MaxLevel, MaxElements, nullptr, size), treeSize(0)
+Quadtree::Quadtree() : Quadtree(5, 5, 0, { 0, 0, 1920, 1080 }, nullptr) {}
+
+Quadtree::Quadtree(int maxObjects, int maxLevels, int level, sf::FloatRect bounds, Quadtree* parent) : maxObjects(maxObjects), maxLevels(maxLevels), level(level), bounds(bounds), parent(parent) {}
+
+void Quadtree::Insert(std::shared_ptr<CollisionComponent> object)
 {
-	head.maxElements = MaxElements;
-	head.maxLevel = MaxLevel;
-	head.parent = nullptr;
-	head.bounds = this->size = size;
+	if (!bounds.intersects(object->getBounds()))
+	{
+		return;
+	}
+
+	if (children[0] != nullptr)
+	{
+		int indexToPlaceObject = GetChildIndexForObject(object->getBounds());
+
+		if (indexToPlaceObject != thisTree)
+		{
+			children[indexToPlaceObject]->Insert(object);
+			return;
+		}
+	}
+
+	objects.emplace_back(object);
+
+	if (objects.size() > maxObjects&& level < maxLevels && children[0] == nullptr)
+	{
+		Split();
+
+		auto objIterator = objects.begin();
+		while (objIterator != objects.end())
+		{
+			auto obj = *objIterator;
+			int indexToPlaceObject = GetChildIndexForObject(obj->getBounds());
+
+			if (indexToPlaceObject != thisTree)
+			{
+				children[indexToPlaceObject]->Insert(obj);
+				objIterator = objects.erase(objIterator);
+
+			}
+			else
+			{
+				++objIterator;
+			}
+		}
+	}
 }
 
-void Quadtree::split(Node& toSplit)
+void Quadtree::Remove(std::shared_ptr<CollisionComponent> object)
 {
-	if (toSplit.maxLevel == 0) throw std::length_error("too deep quadtree");
-	if (toSplit.children.at(0) != nullptr) return;
-	const float childWidth = toSplit.bounds.width / 2;
-	const float childHeight = toSplit.bounds.height / 2;
-	toSplit.children[0] = std::make_unique<Node>(toSplit.maxLevel-1, toSplit.maxElements, &toSplit,
-		sf::FloatRect(toSplit.bounds.left, toSplit.bounds.top, childWidth, childHeight));
-	toSplit.children[1] = std::make_unique<Node>(toSplit.maxLevel - 1, toSplit.maxElements, &toSplit,
-		sf::FloatRect(toSplit.bounds.left + childWidth, toSplit.bounds.top, childWidth, childHeight));
-	toSplit.children[2] = std::make_unique<Node>(toSplit.maxLevel - 1, toSplit.maxElements, &toSplit,
-		sf::FloatRect(toSplit.bounds.left, toSplit.bounds.top + childHeight, childWidth, childHeight));
-	toSplit.children[3] = std::make_unique<Node>(toSplit.maxLevel - 1, toSplit.maxElements, &toSplit,
-		sf::FloatRect(toSplit.bounds.left + childWidth, toSplit.bounds.top + childHeight, childWidth, childHeight));
+	int index = GetChildIndexForObject(object->getBounds());
+
+	if (index == thisTree || children[index] == nullptr)
+	{
+		for (int i = 0; i < objects.size(); i++)
+		{
+			if (objects.at(i)->getOwner()->getId() == object->getOwner()->getId())
+			{
+				objects.erase(objects.begin() + i);
+				break;
+			}
+		}
+	}
+	else
+	{
+		return children[index]->Remove(object);
+	}
 }
 
-int Quadtree::getChildIndexForObject(std::shared_ptr<CollisionComponent> element, Node& parent)
+void Quadtree::Clear()
 {
-	int index = thisTree;
-	float verticalDividingLine = parent.bounds.left + parent.bounds.width * 0.5f;
-	float horizontalDividingLine = parent.bounds.top + parent.bounds.height * 0.5f;
+	objects.clear();
 
-	bool north = element->getTop() < horizontalDividingLine;
-	bool south = element->getTop() > horizontalDividingLine;
-	bool west = element->getLeft()< verticalDividingLine;
-	bool east = element->getLeft() > verticalDividingLine;
-	if (north && south)
-		return index;
-	if (west && east)
-		return index;
+	for (int i = 0; i < 4; i++)
+	{
+		if (children[i] != nullptr)
+		{
+			children[i]->Clear();
+			children[i] = nullptr;
+		}
+	}
+}
+
+std::vector<std::shared_ptr<CollisionComponent>> Quadtree::Search(std::shared_ptr<CollisionComponent> object)
+{
+	const sf::FloatRect area = object->getBounds();
+	std::vector<std::shared_ptr<CollisionComponent>> possibleOverlaps;
+	Search(area, possibleOverlaps);
+	return possibleOverlaps;
+}
+
+void Quadtree::Search(const sf::FloatRect& area,
+	std::vector<std::shared_ptr<CollisionComponent>>& overlappingObjects)
+{
+	overlappingObjects.insert(overlappingObjects.end(), objects.begin(), objects.end());
+
+	if (children[0] != nullptr)
+	{
+		int index = GetChildIndexForObject(area);
+
+		if (index == thisTree)
+		{
+			for (int i = 0; i < 4; i++)
+			{
+				if (children[i]->GetBounds().intersects(area))
+				{
+					children[i]->Search(area, overlappingObjects);
+				}
+			}
+		}
+		else
+		{
+			children[index]->Search(area, overlappingObjects);
+		}
+	}
+}
+
+const sf::FloatRect& Quadtree::GetBounds() const
+{
+	return bounds;
+}
+
+int Quadtree::GetChildIndexForObject(const sf::FloatRect& objectBounds)
+{
+	int index = -1;
+	float verticalDividingLine = bounds.left + bounds.width * 0.5f;
+	float horizontalDividingLine = bounds.top + bounds.height * 0.5f;
+
+	bool north = objectBounds.top < horizontalDividingLine && (objectBounds.height + objectBounds.top < horizontalDividingLine);
+	bool south = objectBounds.top > horizontalDividingLine;
+	bool west = objectBounds.left < verticalDividingLine && (objectBounds.left + objectBounds.width < verticalDividingLine);
+	bool east = objectBounds.left > verticalDividingLine;
+
 	if (east)
 	{
 		if (north)
@@ -63,87 +155,17 @@ int Quadtree::getChildIndexForObject(std::shared_ptr<CollisionComponent> element
 			index = childSW;
 		}
 	}
+
 	return index;
 }
 
-Quadtree::Node& Quadtree::search(Node& parent, std::shared_ptr<CollisionComponent> toFind)
+void Quadtree::Split()
 {
-	int index = getChildIndexForObject(toFind, parent);
-	Node* node = &parent;
-	while (index != thisTree && node->children.at(index).get() != nullptr)
-	{
-		node = node->children.at(index).get();
-		index = getChildIndexForObject(toFind, *node);
-	}
-	return *node;
-}
+	float childWidth = bounds.width / 2.f;
+	float childHeight = bounds.height / 2.f;
 
-void Quadtree::add(std::shared_ptr<CollisionComponent> toAdd)
-{
-	Node* area = &search(head, toAdd);
-	if (area->elements.size() >= area->maxElements) // if not ok
-	{
-		split(*area);
-		auto it = area->elements.begin();
-		while (it != area->elements.end())
-		{
-			int index = getChildIndexForObject(*it, *area);
-			if (index != thisTree)
-			{
-				area->children.at(index)->elements.push_back(*it);
-				it = area->elements.erase(it);
-			}
-			else
-				it++;
-		}
-		if (area->elements.size() >= area->maxElements)
-			std::cout << "Number of elements in node: " << area->elements.size() << std::endl;
-		int index = getChildIndexForObject(toAdd, *area);
-		if (index != thisTree)
-			area = area->children.at(index).get();
-	}
-	area->elements.push_back(toAdd);
-	treeSize++;
+	children[childNE] = std::make_shared<Quadtree>(maxObjects, maxLevels, level + 1, sf::FloatRect(bounds.left + childWidth, bounds.top, childWidth, childHeight), this);
+	children[childNW] = std::make_shared<Quadtree>(maxObjects, maxLevels, level + 1, sf::FloatRect(bounds.left, bounds.top, childWidth, childHeight), this);
+	children[childSW] = std::make_shared<Quadtree>(maxObjects, maxLevels, level + 1, sf::FloatRect(bounds.left, bounds.top + childHeight, childWidth, childHeight), this);
+	children[childSE] = std::make_shared<Quadtree>(maxObjects, maxLevels, level + 1, sf::FloatRect(bounds.left + childWidth, bounds.top + childHeight, childWidth, childHeight), this);
 }
-
-void Quadtree::remove(std::shared_ptr<CollisionComponent> toRemove)
-{
-	Node& node = search(head, toRemove);
-	node.elements.erase(std::find(node.elements.begin(), node.elements.end(), toRemove));
-	treeSize--;
-}
-
-std::vector<std::shared_ptr<CollisionComponent>> Quadtree::possibleOverlaps(std::shared_ptr<CollisionComponent> object)
-{
-	return possibleOverlaps(object, head);
-}
-
-std::vector<std::shared_ptr<CollisionComponent>> Quadtree::possibleOverlaps(std::shared_ptr<CollisionComponent> object, Node& parentNode)
-{
-	std::vector<std::shared_ptr<CollisionComponent>> toReturn;
-	Node* node = &search(parentNode, object);
-	toReturn.insert(toReturn.end(), node->elements.begin(), node->elements.end());
-	if (node->children.at(0).get() != nullptr)
-	{
-		for (auto& element : node->children)
-		{
-			auto temp = addAllChildren(&(*element));
-			toReturn.insert(toReturn.end(), temp.begin(), temp.end());
-		}
-	}
-	return toReturn;
-}
-
-std::vector<std::shared_ptr<CollisionComponent>> Quadtree::addAllChildren(Node* parent)
-{
-	auto toReturn = std::vector<std::shared_ptr<CollisionComponent>>();
-	if (parent->children.at(0) == nullptr) return toReturn;
-	for (auto& child : parent->children)
-	{
-		toReturn.insert(toReturn.end(), child->elements.begin(), child->elements.end());
-		auto temp = addAllChildren(&(*child));
-		toReturn.insert(toReturn.end(), temp.begin(), temp.end());
-	}
-	return toReturn;
-}
-

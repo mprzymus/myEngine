@@ -14,12 +14,12 @@ Ground::Ground(const sf::Shape& shape, const float gravitational_acceleration)
 	: ground(shape), g(gravitational_acceleration/ pow(10.f, 12.f)*45.f)
 {}*/
 
-void Gravity::addObject(std::shared_ptr<Object> toAdd)
+void Gravity::addObject(Object* toAdd)
 {
 	entities.push_back(toAdd);
 }
 
-bool Gravity::removeObject(std::shared_ptr<Object> toRemove)
+bool Gravity::removeObject(Object* toRemove)
 {
 	auto it = std::find(entities.begin(), entities.end(), toRemove);
 	if (it != entities.end())

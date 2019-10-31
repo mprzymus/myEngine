@@ -12,8 +12,7 @@ void DynamicPositionComponent::update(float timeElapsed)
 	if (!inAir && startedToFall)
 	{
 		//std::cout << "Started to fall\n";
-		if (!owner.expired())
-			gravity.addObject(owner.lock());
+		gravity.addObject(owner);
 		inAir = true;
 	}
 	position.x += timeElapsed * currentSpeed.x;

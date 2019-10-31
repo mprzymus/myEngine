@@ -1,42 +1,44 @@
-#pragma once
-#include <array>
+#include <memory>
 #include <vector>
-#include <SFML/Graphics/Rect.hpp>
+
 #include "CollisionComponent.h"
+#include "Object.h"
 
 class Quadtree
 {
-	int treeSize; //testing reason
-	const static int thisTree = -1;
-	const static int childNW = 0;
-	const static int childNE = 1;
-	const static int childSW = 2;
-	const static int childSE = 3;
-	struct Node 
-	{
-		int maxLevel; //how many times node might be divided
-		int maxElements;
-		Node* parent;
-		std::array<std::unique_ptr<Node>, 4> children;
-		std::vector<std::shared_ptr<CollisionComponent>> elements;
-		sf::FloatRect bounds;
-		Node(int MaxLevel, int MaxElements, Node* Parent, sf::FloatRect Bounds) :
-			maxLevel(MaxLevel), maxElements(MaxElements), parent(Parent), bounds(Bounds) {}
-	};
-	Node head;
-	sf::FloatRect size;//map size
-	Node& search(Node& parent, std::shared_ptr<CollisionComponent> toFind);// returns node where object should be add to
-	void split(Node& toSplit);
-	int getChildIndexForObject(std::shared_ptr<CollisionComponent> element, Node& parent);
-	std::vector<std::shared_ptr<CollisionComponent>> possibleOverlaps//TODO do not copy this
-	(std::shared_ptr<CollisionComponent> object, Node& parentNode); // return object which might collide
-	std::vector<std::shared_ptr<CollisionComponent>> addAllChildren(Node* parent);
 public:
-	Quadtree(int MaxLevel, int MaxElements, sf::FloatRect size);
-	void add(std::shared_ptr<CollisionComponent> toAdd);
-	void remove(std::shared_ptr<CollisionComponent> toRemove);
-	std::vector<std::shared_ptr<CollisionComponent>> possibleOverlaps(std::shared_ptr<CollisionComponent> object);
-	void update();//TODO to keep moving object in tree
-	int getSize() const { return treeSize; }
-};
+	Quadtree();
+	Quadtree(int maxObjects, int maxLevels, int level, sf::FloatRect bounds, Quadtree* parent);
 
+	void Insert(std::shared_ptr<CollisionComponent> object);
+	void Remove(std::shared_ptr<CollisionComponent> object);
+	void Clear();
+
+	std::vector<std::shared_ptr<CollisionComponent>> Search(std::shared_ptr<CollisionComponent> object);
+
+	const sf::FloatRect& GetBounds() const;
+
+private:
+	void Search(const sf::FloatRect& area, std::vector<std::shared_ptr<CollisionComponent>>& overlappingObjects);
+
+	int GetChildIndexForObject(const sf::FloatRect& objectBounds);
+	void Split();
+
+	static const int thisTree = -1;
+	static const int childNE = 0;
+	static const int childNW = 1;
+	static const int childSW = 2;
+	static const int childSE = 3;
+
+	int maxObjects;
+	int maxLevels;
+
+	Quadtree* parent;
+	std::shared_ptr<Quadtree> children[4];
+
+	std::vector<std::shared_ptr<CollisionComponent>> objects;
+
+	int level;
+
+	sf::FloatRect bounds;
+};

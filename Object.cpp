@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object(sf::Vector2i size)
+Object::Object(sf::Vector2i size) : id(this)
 {
 	this->size = size;
 }

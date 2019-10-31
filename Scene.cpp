@@ -11,7 +11,8 @@ void Scene::addObject(std::shared_ptr<Object> toAdd)
 }
 
 Scene::Scene(std::string sceneSourceName, sf::Vector2i resolution) :
-	window(sf::VideoMode(resolution.x, resolution.y), "do sth", sf::Style::Default), debugger(window), gravity(1000.f), collidable(500, 6, {0,0, 3200,1500 })
+	window(sf::VideoMode(resolution.x, resolution.y), "do sth", sf::Style::Default), debugger(window), gravity(1000.f), 
+	collidable(10, 10, 0, sf::FloatRect(0.f, 0.f, 3200.f, 1500.f), nullptr)
 {
 	sf::Vector2i size{ 55,40 };
 	sf::Vector2i textureSize{200, 145};
@@ -32,7 +33,7 @@ Scene::Scene(std::string sceneSourceName, sf::Vector2i resolution) :
 	object->setGraphic(std::move(gComponent));
 	objects.push_back(object); 
 	object->addComponent(keyboard);
-	std::shared_ptr<RectCollisionComponent> col = std::make_shared<RectCollisionComponent>(std::move(std::make_unique<RectMovable>(gravity)));
+	std::shared_ptr<RectCollisionComponent> col = std::make_shared<RectCollisionComponent>(object, std::move(std::make_unique<RectMovable>(gravity)));
 	col->setOwner(object);
 	object->addComponent(col);
 	myHero = col;
@@ -45,22 +46,19 @@ Scene::Scene(std::string sceneSourceName, sf::Vector2i resolution) :
 		if (rect != nullptr)
 			debugger.addCollidable(rect);
 	}
-	gravity.addObject(object);
+	gravity.addObject(object.get());
 	clock.restart(); // to start measuring time after scene's creation
-	std::cout << collidable.getSize() << std::endl;
 }
 
 bool Scene::update()
 {
 	sf::Time time = clock.restart();
-	//std::thread collider(&Scene::collisionUpdate, this);
 	gravity.update(time.asSeconds());
 	for (auto& object : objects)
 	{
 		object->update(time.asSeconds());
 	}
-	//std::cout << temp.size() << std::endl;
-	//collisionUpdate();
+	collisionUpdate();
 	draw();
 	debugger.drawCollidableSquares();
 	sf::Event event;
@@ -73,7 +71,6 @@ bool Scene::update()
 		}
 		
 	}
-	//collider.join();
 	view->update();
 	window.setView(view->getView());
 	window.display();
@@ -83,7 +80,7 @@ bool Scene::update()
 
 void Scene::collisionUpdate()
 {
-	std::vector<std::shared_ptr<CollisionComponent>> temp = collidable.possibleOverlaps(myHero);
+	std::vector<std::shared_ptr<CollisionComponent>> temp = collidable.Search(myHero);
 	for (auto& collidable : temp)
 	{
 		collidable->resolveCollision(*myHero);
@@ -102,7 +99,7 @@ void Scene::draw()
 void Scene::addCollidable(std::shared_ptr<CollisionComponent> toAdd)
 {
 	//movable.push_back(toAdd);
-	collidable.add(toAdd);
+	collidable.Insert(toAdd);
 	auto rect = std::dynamic_pointer_cast<RectCollisionComponent>(toAdd);
 	if (rect != nullptr)
 		debugger.addCollidable(rect);

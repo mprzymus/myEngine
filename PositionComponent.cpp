@@ -6,8 +6,7 @@
 void PositionComponent::update(float timeElapsed)
 {}
 
-PositionComponent::PositionComponent(std::shared_ptr<Object> owner, sf::Vector2f position)
+PositionComponent::PositionComponent(std::shared_ptr<Object> owner, sf::Vector2f position) : Component(owner)
 {
 	this->position = position;
-	this->owner = owner;
 }
